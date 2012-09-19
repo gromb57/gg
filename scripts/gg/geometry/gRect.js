@@ -11,15 +11,27 @@ function gRect(){
 	this.w=null;//width
 	this.h=null;//height
 
+	//function
+	this.is=function(p1, p2, p3, p4){
+		var __is=true;
+
+		//TODO : implement
+
+		return __is;
+	};
+
 	//constructor
 	if(arguments.length > 0){
 		if( (arguments[0] instanceof gPoint) && (arguments[1] instanceof gPoint) && (arguments[2] instanceof gPoint) && (arguments[3] instanceof gPoint) ){
-			//todo : check if rectangle
-			this.points=[arguments[0], arguments[1], arguments[2], arguments[3]];
-			this.x=arguments[0].x;
-			this.y=arguments[0].y;
-			this.w=arguments[2].x;
-			this.h=arguments[1].y;
+			if(this.is(arguments[0], arguments[1], arguments[2], arguments[3])){
+				this.points=[arguments[0], arguments[1], arguments[2], arguments[3]];
+				this.x=arguments[0].x;
+				this.y=arguments[0].y;
+				this.w=arguments[2].x;
+				this.h=arguments[1].y;
+			}else{
+				throw new TypeError("gRect.constructor : not a valid rectangle");
+			}
 		}else if( (arguments[0] instanceof gPoint) && (typeof parseInt(arguments[1], 10) == 'number') && (typeof parseInt(arguments[2], 10) == 'number') ){
 			this.x=arguments[0].x;
 			this.y=arguments[0].y;
@@ -36,6 +48,4 @@ function gRect(){
 			throw new TypeError("gRect.constructor : bad arguments");
 		}
 	}
-
-	//function
 }

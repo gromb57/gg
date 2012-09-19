@@ -90,4 +90,9 @@ function ggMainChar(){
 		},
 		1000/60);
 	};
+
+	this.events.onContact=function(obj){
+		ui.message.vars.isDisplayed=1;
+		ui.message.vars.msg='Collision !';
+	};
 }

@@ -72,4 +72,8 @@ function ggCharacter(){
 			}
 		}
 	};
+
+	this.events.onContact=function(obj){
+		//TODO : implements
+	};
 }

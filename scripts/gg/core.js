@@ -24,11 +24,13 @@ function ggCore(canvasElm){
 					check:function(obj){
 						for(var __x in obj){
 							if(obj.hasOwnProperty(__x)){
-								if(__x != mains){
+								if(__x != "mains"){
 									if( obj[__x].hasOwnProperty('vars') && obj[__x].vars.hasOwnProperty('body') ){
 										for(var __y in game.vars.objects.characters.mains){
 											if(game.vars.objects.characters.mains.hasOwnProperty(__y)){
-												
+												if(game.vars.objects.characters.mains[__y].fn.isOnContact(obj[__x])){
+													game.vars.objects.characters.mains[__y].events.onContact(obj[__x]);
+												}
 											}
 										}
 									}else{
@@ -54,7 +56,7 @@ function ggCore(canvasElm){
 						game.vars.toDraw[__funcKey](game.vars.ctx);
 					}
 					__funcKey=null;
-					game.fn.events.collision.check(game.vars.object);
+					game.fn.events.collision.check(game.vars.objects);
 				},
 				__timeout);
 			},
