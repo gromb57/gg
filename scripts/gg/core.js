@@ -28,9 +28,7 @@ function ggCore(canvasElm){
 									if( obj[__x].hasOwnProperty('vars') && obj[__x].vars.hasOwnProperty('body') ){
 										for(var __y in game.vars.objects.characters.mains){
 											if(game.vars.objects.characters.mains.hasOwnProperty(__y)){
-												if(game.vars.objects.characters.mains[__y].fn.isOnContact(obj[__x])){
-													game.vars.objects.characters.mains[__y].events.onContact(obj[__x]);
-												}
+												game.vars.objects.characters.mains[__y].fn.isOnContact(obj[__x]);
 											}
 										}
 									}else{

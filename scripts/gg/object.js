@@ -42,7 +42,8 @@ function ggObject(){
 				}
 			}
 			__is&=(__isX && __isY);
-			return __is;
+
+			if(__is) self.events.onContact(obj);
 		}
 	};
 	this.events={
