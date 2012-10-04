@@ -69,7 +69,7 @@ function ggCore(canvasElm){
 					}
 					__funcKey=null;
 					
-					self.fn.events.collision.check(self.vars.objects);
+					self.fn.events.collision.check(self.vars.scene.objects);
 				}
 			},
 			__timeout);
@@ -116,14 +116,16 @@ function ggCore(canvasElm){
 		}
 	};
 
+	//PRIVATE
+	function _keyEvts(event){
+		if( self.vars.actions[event.which] && self.vars.actions[event.which][event.type] && typeof self.vars.actions[event.which][event.type] == "function" ) self.vars.actions[event.which][event.type]();
+	}
+
+	//CONSTRUCTOR
 	//Set canvas
 	self.vars.canvas=document.getElementById(canvasElm);
 	self.fn.init();
 	//init key events
-	window.addEventListener('keydown', function(event){
-		if( self.vars.actions[event.which] && self.vars.actions[event.which]["keydown"] && typeof self.vars.actions[event.which]["keydown"] == "function" ) self.vars.actions[event.which]["keydown"]();
-	});
-	window.addEventListener('keyup', function(event){
-		if( self.vars.actions[event.which] && self.vars.actions[event.which]["keyup"] && typeof self.vars.actions[event.which]["keyup"] == "function" ) self.vars.actions[event.which]["keyup"]();
-	});
+	window.addEventListener('keydown', _keyEvts);
+	window.addEventListener('keyup', _keyEvts);
 }

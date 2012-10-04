@@ -67,6 +67,10 @@ function ggMainChar(){
 		kd:{
 			left:function(){
 				if(self.vars.body.isMoving){
+					if(self.vars.body.direction==1){
+						clearTimeout(self.vars.moveTO);
+					}
+					
 				}else{
 					self.vars.body.isMoving=1;
 					self.vars.body.direction=-1;
@@ -81,6 +85,9 @@ function ggMainChar(){
 			},
 			right:function(){
 				if(self.vars.body.isMoving){
+					if(self.vars.body.direction==-1){
+						clearTimeout(self.vars.moveTO);
+					}
 				}else{
 					self.vars.body.isMoving=1;
 					self.vars.body.direction=1;
@@ -122,8 +129,11 @@ function ggMainChar(){
 	};
 
 	this.events.onContact=function(obj){
-		ui.message.vars.isDisplayed=1;
-		ui.message.vars.msg='Collision !';
+		if(obj instanceof ggEnemyChar){
+			self.core.vars.ui.message.fn.set('Collision with an enemy !');
+		}else if(obj instanceof ggSolid){
+			self.core.vars.ui.message.fn.set('Collision with a solid !');
+		}
 	};
 
 	//constructor
