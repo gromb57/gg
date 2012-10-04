@@ -22,27 +22,27 @@ function ggScene(){
 	};
 	self.fn={
 		init:function(ggCore_object){
-			scene.core=ggCore_object;
-			scene.ground.h=scene.screen.h/10;
+			self.core=ggCore_object;
+			self.ground.h=self.screen.h/10;
 		},
 		draw:function(context){
 			/*context.save();
 			//sky
-			var skyGrad = context.createLinearGradient(0, 0 , 0, scene.screen.h);
+			var skyGrad = context.createLinearGradient(0, 0 , 0, self.screen.h);
 			skyGrad.addColorStop(0, '#CBE4FA');
 			skyGrad.addColorStop(0.5, '#70C0F8');
 
 			context.fillStyle = skyGrad;
-			context.fillRect(0, 0, scene.screen.w, scene.screen.h);
+			context.fillRect(0, 0, self.screen.w, self.screen.h);
 
 			//ground
-			var groundGrad = context.createLinearGradient(0, (scene.screen.h - scene.ground.h) , 0, scene.screen.h);
+			var groundGrad = context.createLinearGradient(0, (self.screen.h - self.ground.h) , 0, self.screen.h);
 			groundGrad.addColorStop(0, '#00AB00');
 			groundGrad.addColorStop(0.1, '#582629');
 			groundGrad.addColorStop(1, '#D4B58D');
 
 			context.fillStyle = groundGrad;
-			context.fillRect(0, (scene.screen.h - scene.ground.h), scene.screen.w, scene.screen.h);
+			context.fillRect(0, (self.screen.h - self.ground.h), self.screen.w, self.screen.h);
 
 			//cloud
 			var cloud={};
@@ -64,8 +64,8 @@ function ggScene(){
 	__fn={
 		load:function(obj){
 			if(obj.name) self.name=obj.name;
-			if(obj.height) self.screen.h=obj.height;
-			if(obj.width) self.screen.w=obj.width;
+			if(obj.height) self.screen.h=parseInt(obj.height, 10);
+			if(obj.width) self.screen.w=parseInt(obj.width, 10);
 			if(obj.objects){
 				for(var x in obj.objects){
 					if(obj.objects.hasOwnProperty(x)){
@@ -125,6 +125,9 @@ function ggScene(){
 						}
 						var mainChar=new ggMainChar(obj, self.core);
 						self.objects.characters.mains.push(mainChar);
+
+						//set ground ; IMPORTANT : work if there are only one main_char
+						self.ground.h=self.screen.h-obj.y;
 					}else{
 						self.core.fn.errorMsg('ggMainChar not found');
 					}

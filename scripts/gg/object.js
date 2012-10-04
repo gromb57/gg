@@ -31,16 +31,16 @@ function ggObject(){
 						self.vars.id=arguments[0].id;
 					}
 					if(arguments[0].x){
-						self.vars.body.x=arguments[0].x;
+						self.vars.body.x=parseInt(arguments[0].x, 10);
 					}
 					if(arguments[0].y){
-						self.vars.body.y=arguments[0].y;
+						self.vars.body.y=parseInt(arguments[0].y, 10);
 					}
 					if(arguments[0].h){
-						self.vars.body.h=arguments[0].h;
+						self.vars.body.h=parseInt(arguments[0].h, 10);
 					}
 					if(arguments[0].w){
-						self.vars.body.w=arguments[0].w;
+						self.vars.body.w=parseInt(arguments[0].w, 10);
 					}
 				}
 			}

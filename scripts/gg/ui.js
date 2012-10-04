@@ -1,119 +1,147 @@
 function ggUI(){
-	var ui={
+	var self=this;
+	self.core=null;
+	self.vars={};
+	self.fn={
+		init:function(ggCore_object){
+			self.core=ggCore_object;
+			self.actions.set();
+		}
+	};
+	self.actions={
+		kd:{
+			escape:function(){
+				if(self.pause.vars.isPaused){
+					self.pause.fn.unset();
+				}else{
+					self.pause.fn.set();
+				}
+			}
+		},
+		set:function(){
+			//keydown
+			self.core.fn.action.add(27, "keydown", self.actions.kd.escape);//escape
+		}
+	};
+	self.score={
 		vars:{
-			core:null
+			value:0,
+			h:scene.screen.h/10,
+			w:scene.screen.w/5,
+			padding:10
 		},
 		fn:{
-			init:function(ggCore_object){
-				ui.vars.core=ggCore_object;
-			}
-		},
-		score:{
-			vars:{
-				value:0,
-				h:scene.screen.h/10,
-				w:scene.screen.w/5,
-				padding:10
-			},
-			fn:{
-				draw:function(context){
-					context.save();
-					context.beginPath();
-					context.moveTo((ui.score.vars.w*0.5+ui.score.vars.padding), ui.score.vars.padding);//milieu haut
-					context.lineTo((ui.score.vars.w*0.75+ui.score.vars.padding), ui.score.vars.padding);//3/4 haut
-					context.quadraticCurveTo(ui.score.vars.w+ui.score.vars.padding, ui.score.vars.padding, ui.score.vars.w+ui.score.vars.padding, (ui.score.vars.h*0.25+ui.score.vars.padding));//1/4 droite
-					context.lineTo((ui.score.vars.w+ui.score.vars.padding), ui.score.vars.h*0.75+ui.score.vars.padding);//3/4 droite
-					context.quadraticCurveTo((ui.score.vars.w+ui.score.vars.padding), (ui.score.vars.h+ui.score.vars.padding), (ui.score.vars.w*0.75+ui.score.vars.padding), (ui.score.vars.h+ui.score.vars.padding));//3/4 bas
-					context.lineTo((ui.score.vars.w*0.25+ui.score.vars.padding), (ui.score.vars.h+ui.score.vars.padding));//1/4 bas
-					context.quadraticCurveTo(ui.score.vars.padding, (ui.score.vars.h+ui.score.vars.padding), ui.score.vars.padding, (ui.score.vars.h*0.75+ui.score.vars.padding));
-					context.lineTo(ui.score.vars.padding, (ui.score.vars.h*0.25+ui.score.vars.padding));
-					context.quadraticCurveTo(ui.score.vars.padding, ui.score.vars.padding, (ui.score.vars.h+ui.score.vars.padding), ui.score.vars.padding);
-					context.closePath();
+			draw:function(ctx){
+				ctx.save();
+				ctx.beginPath();
+				ctx.moveTo((self.score.vars.w*0.5+self.score.vars.padding), self.score.vars.padding);//milieu haut
+				ctx.lineTo((self.score.vars.w*0.75+self.score.vars.padding), self.score.vars.padding);//3/4 haut
+				ctx.quadraticCurveTo(self.score.vars.w+self.score.vars.padding, self.score.vars.padding, self.score.vars.w+self.score.vars.padding, (self.score.vars.h*0.25+self.score.vars.padding));//1/4 droite
+				ctx.lineTo((self.score.vars.w+self.score.vars.padding), self.score.vars.h*0.75+self.score.vars.padding);//3/4 droite
+				ctx.quadraticCurveTo((self.score.vars.w+self.score.vars.padding), (self.score.vars.h+self.score.vars.padding), (self.score.vars.w*0.75+self.score.vars.padding), (self.score.vars.h+self.score.vars.padding));//3/4 bas
+				ctx.lineTo((self.score.vars.w*0.25+self.score.vars.padding), (self.score.vars.h+self.score.vars.padding));//1/4 bas
+				ctx.quadraticCurveTo(self.score.vars.padding, (self.score.vars.h+self.score.vars.padding), self.score.vars.padding, (self.score.vars.h*0.75+self.score.vars.padding));
+				ctx.lineTo(self.score.vars.padding, (self.score.vars.h*0.25+self.score.vars.padding));
+				ctx.quadraticCurveTo(self.score.vars.padding, self.score.vars.padding, (self.score.vars.h+self.score.vars.padding), self.score.vars.padding);
+				ctx.closePath();
 
-					var scoreGrad = context.createLinearGradient(0, ui.score.vars.padding , 0, (ui.score.vars.h+ui.score.vars.padding));
-					scoreGrad.addColorStop(0, '#ccc');
-					scoreGrad.addColorStop(1, '#aaa');
+				var scoreGrad = ctx.createLinearGradient(0, self.score.vars.padding , 0, (self.score.vars.h+self.score.vars.padding));
+				scoreGrad.addColorStop(0, '#ccc');
+				scoreGrad.addColorStop(1, '#aaa');
 
-					context.fillStyle = scoreGrad;
-					context.fill();
-					context.strokeStyle = '#333';
-					context.stroke();
-					context.font = "20px Arial";
-					context.fillStyle = '#333';
-					context.fillText("Score : "+ui.score.vars.value, (ui.score.vars.padding*2), (ui.score.vars.padding*4));
-					context.restore();
-				}
-			}
-		},
-		pause:{
-			fn:{
-				draw:function(){
-					var context=ui.vars.core.vars.ctx;
-					context.save();
-
-					//background
-					var __background={};
-					__background.x=scene.screen.w*0.2;
-					__background.y=scene.screen.h*0.2;
-					__background.w=scene.screen.w*0.6;
-					__background.h=scene.screen.h*0.6;
-
-					context.fillStyle='#333';
-					context.fillRect(__background.x, __background.y, __background.w, __background.h);
-
-					//title
-					var __title='Pause';
-					context.shadowOffsetX = 0;  
-					context.shadowOffsetY = 0;  
-					context.shadowBlur = 2;  
-					context.shadowColor = "#c63";
-
-					context.font = "60px Arial";
-					context.fillStyle = '#F4C06C';
-					var __lbl_dim=context.measureText(__title);
-					context.fillText(__title, ((scene.screen.w/2)-__lbl_dim.width/2), (__background.y+50));
-					__lbl_dim=null;
-
-					context.restore();
-					context=__title=__background=null;
-				}
-			}
-		},
-		message:{
-			vars:{
-				msg:'',
-				isDisplayed:0,
-				timeout:null
-			},
-			fn:{
-				draw:function(){
-					var context=ui.vars.core.vars.ctx;
-					context.save();
-					context.shadowOffsetX = 0;  
-					context.shadowOffsetY = 0;  
-					context.shadowBlur = 2;  
-					context.shadowColor = "#c63";
-
-					context.font = "60px Arial";
-					context.fillStyle = '#F4C06C';
-					var __lbl_dim=context.measureText(ui.message.vars.msg);
-					context.fillText(ui.message.vars.msg, ((scene.screen.w/2)-__lbl_dim.width/2), 50);
-					__lbl_dim=null;
-					context.restore();
-
-					if( ui.message.vars.isDisplayed ){
-						clearTimeout(ui.message.vars.timeout);
-						ui.message.vars.timeout=setTimeout(function(){
-							ui.message.vars.msg='';
-							ui.vars.core.fn.draw();
-						}, 1000);
-						ui.message.vars.isDisplayed=0;
-					}
-					context=null;
-				}
+				ctx.fillStyle = scoreGrad;
+				ctx.fill();
+				ctx.strokeStyle = '#333';
+				ctx.stroke();
+				ctx.font = "20px Arial";
+				ctx.fillStyle = '#333';
+				ctx.fillText("Score : "+self.score.vars.value, (self.score.vars.padding*2), (self.score.vars.padding*4));
+				ctx.restore();
 			}
 		}
 	};
+	self.pause={
+		vars:{
+			isPaused:0
+		},
+		fn:{
+			draw:function(){
+				var ctx=self.core.vars.ctx;
+				ctx.save();
 
-	return ui;
+				//background
+				var __background={};
+				__background.x=scene.screen.w*0.2;
+				__background.y=scene.screen.h*0.2;
+				__background.w=scene.screen.w*0.6;
+				__background.h=scene.screen.h*0.6;
+
+				ctx.fillStyle='#333';
+				ctx.fillRect(__background.x, __background.y, __background.w, __background.h);
+
+				//title
+				var __title='Pause';
+				ctx.shadowOffsetX = 0;  
+				ctx.shadowOffsetY = 0;  
+				ctx.shadowBlur = 2;  
+				ctx.shadowColor = "#c63";
+
+				ctx.font = "60px Arial";
+				ctx.fillStyle = '#F4C06C';
+				var __lbl_dim=ctx.measureText(__title);
+				ctx.fillText(__title, ((scene.screen.w/2)-__lbl_dim.width/2), (__background.y+50));
+				__lbl_dim=null;
+
+				ctx.restore();
+				ctx=__title=__background=null;
+			},
+			set:function(){
+				self.pause.vars.isPaused=1;
+				self.core.fn.stopDraw();
+				self.pause.fn.draw();
+			},
+			unset:function(){
+				self.pause.vars.isPaused=0;
+				self.core.fn.draw();
+			}
+		}
+	};
+	self.message={
+		vars:{
+			msg:'',
+			isDisplayed:0,
+			timeout:null
+		},
+		fn:{
+			draw:function(){
+				var ctx=self.core.vars.ctx;
+				ctx.save();
+				ctx.shadowOffsetX = 0;  
+				ctx.shadowOffsetY = 0;  
+				ctx.shadowBlur = 2;  
+				ctx.shadowColor = "#c63";
+
+				ctx.font = "60px Arial";
+				ctx.fillStyle = '#F4C06C';
+				var __lbl_dim=ctx.measureText(self.message.vars.msg);
+				ctx.fillText(self.message.vars.msg, ((scene.screen.w/2)-__lbl_dim.width/2), 50);
+				__lbl_dim=null;
+				ctx.restore();
+
+				if( self.message.vars.isDisplayed ){
+					clearTimeout(self.message.vars.timeout);
+					self.message.vars.timeout=setTimeout(function(){
+						self.message.vars.msg='';
+						self.core.fn.draw();
+					}, 1000);
+					self.message.vars.isDisplayed=0;
+				}
+				ctx=null;
+			},
+			set:function(msg){
+				self.message.vars.isDisplayed=1;
+				self.message.vars.msg=msg;
+			}
+		}
+	};
 }

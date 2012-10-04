@@ -28,10 +28,12 @@ function ggMainChar(){
 		__jump_height=90;//90
 
 		setTimeout(function(){
+			//char is jumping
 			if( self.vars.body.isJumping ){
+				//set skin
 				self.vars.body.skin.current=self.vars.body.skin.jump;
 
-				if( self.vars.body.y ==  (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h) ){
+				if( self.vars.body.y == (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h) ){
 					self.vars.body.isJumping=0;
 					self.vars.body.isUp=1;
 				}else if( self.vars.body.isUp && self.vars.body.y != (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h - __jump_height) ){
@@ -42,12 +44,13 @@ function ggMainChar(){
 					self.vars.body.y+=(__jump_px*self.vars.body.vy);
 					self.fn.jump();
 				}
-			}else{
+			}else{//char start jump
+				//set skin
 				self.vars.body.skin.current=self.vars.body.skin.stand;
 
+				//display message
 				if(self.core.vars.ui){
-					self.core.vars.ui.message.vars.isDisplayed=1;
-					self.core.vars.ui.message.vars.msg='JUMP !';
+					self.core.vars.ui.message.fn.set('JUMP !');
 				}
 
 				self.vars.body.y+=(-__jump_px*self.vars.body.vy);
@@ -130,7 +133,7 @@ function ggMainChar(){
 	self.vars.body.vy=1.5;
 	self.vars.body.isMoving=0;
 	self.vars.body.isJumping=0;
-	self.vars.body.isUp=1;
+	self.vars.body.isUp=1;//direction of jump; 1=up, 0=down
 	self.vars.body.direction=1;//1 right, -1 left
 	self.vars.moveTO=null;//timeout for movement
 

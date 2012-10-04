@@ -28,12 +28,3 @@ rect4=new gRect(new gPoint(10,20), 20, 30);
 ggAjax('assets/scene/001.json', function(){
 	console.log(JSON.parse(arguments[0]));
 });*/
-
-window.addEventListener('keydown', function(event){
-	//escape
-	if(event.which == 27){
-		__m1.fn.stopIA();
-		game.fn.stopDraw();
-		ui.pause.fn.draw();
-	}
-});
