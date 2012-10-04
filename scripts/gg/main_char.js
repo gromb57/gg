@@ -8,43 +8,10 @@ function ggMainChar(){
 
 	var self=this;
 
-	this.fn.init=function(ggCore_object){
-		self.vars.core=ggCore_object;
-		self.vars.body.h=100;//100
-		self.vars.body.w=50;//50
-		self.vars.body.x=50;
-		self.vars.body.y=self.vars.core.vars.scene.screen.h - self.vars.core.vars.scene.ground.h;
-		self.vars.body.vx=1.5;
-		self.vars.body.vy=1.5;
-		self.vars.body.isMoving=0;
-		self.vars.body.isJumping=0;
-		self.vars.body.isUp=1;
-		self.vars.body.direction=1;//1 right, -1 left
-		self.vars.move_timeout=null;
-	};
-
-	this.fn.draw=function(context){
-		context.save();
-
-		if(self.vars.body.x > self.vars.core.vars.scene.screen.w){
-			self.vars.body.x=0;
-		}else if(self.vars.body.x < 0){
-			self.vars.body.x=self.vars.core.vars.scene.screen.w;
-		}
-
-		//DRAW
-		self.fn.animation.moving();
-
-		/*var date = new Date();
-		var time = date.getTime();
-		console.log(time);*/
-		context.restore();
-	};
-
 	this.fn.move=function(){
-		self.vars.move_timeout=setTimeout(function(){
+		self.vars.moveTO=setTimeout(function(){
 			self.vars.body.x+=(self.vars.body.direction*self.vars.body.vx*10);
-			self.vars.core.fn.draw();
+			self.core.fn.draw();
 
 			if(self.vars.body.isMoving){
 				self.vars.body.skin.current=self.vars.body.skin.move;
@@ -57,17 +24,17 @@ function ggMainChar(){
 	};
 
 	this.fn.jump=function(){
-		var __jump_px=6;//6
-		var __jump_height=90;//90
+		var __jump_px=6,//6
+		__jump_height=90;//90
 
 		setTimeout(function(){
 			if( self.vars.body.isJumping ){
 				self.vars.body.skin.current=self.vars.body.skin.jump;
 
-				if( self.vars.body.y ==  (self.vars.core.vars.scene.screen.h - self.vars.core.vars.scene.ground.h) ){
+				if( self.vars.body.y ==  (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h) ){
 					self.vars.body.isJumping=0;
 					self.vars.body.isUp=1;
-				}else if( self.vars.body.isUp && self.vars.body.y != (self.vars.core.vars.scene.screen.h - self.vars.core.vars.scene.ground.h - __jump_height) ){
+				}else if( self.vars.body.isUp && self.vars.body.y != (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h - __jump_height) ){
 					self.vars.body.y+=(-__jump_px*self.vars.body.vy);
 					self.fn.jump();
 				}else{
@@ -78,21 +45,95 @@ function ggMainChar(){
 			}else{
 				self.vars.body.skin.current=self.vars.body.skin.stand;
 
-				ui.message.vars.isDisplayed=1;
-				ui.message.vars.msg='JUMP !';
+				if(self.core.vars.ui){
+					self.core.vars.ui.message.vars.isDisplayed=1;
+					self.core.vars.ui.message.vars.msg='JUMP !';
+				}
 
 				self.vars.body.y+=(-__jump_px*self.vars.body.vy);
 				self.vars.body.isJumping=1;
 
 				self.fn.jump();
 			}
-			self.vars.core.fn.draw();
+			self.core.fn.draw();
 		},
 		1000/60);
+	};
+
+	this.fn.actions={
+		kd:{
+			left:function(){
+				if(self.vars.body.isMoving){
+				}else{
+					self.vars.body.isMoving=1;
+					self.vars.body.direction=-1;
+					self.fn.move();
+				}
+			},
+			top:function(){
+				if( self.vars.body.isJumping ){
+				}else{
+					self.fn.jump();
+				}
+			},
+			right:function(){
+				if(self.vars.body.isMoving){
+				}else{
+					self.vars.body.isMoving=1;
+					self.vars.body.direction=1;
+					self.fn.move();
+				}
+			},
+			bottom:function(){
+				
+			}
+		},
+		ku:{
+			left:function(){
+				self.vars.body.isMoving=0;
+				clearTimeout(self.vars.moveTO);
+			},
+			top:function(){
+				
+			},
+			right:function(){
+				self.vars.body.isMoving=0;
+				clearTimeout(self.vars.moveTO);
+			},
+			bottom:function(){
+				
+			}
+		},
+		set:function(){
+			//keydown
+			self.core.fn.action.add(37, "keydown", self.fn.actions.kd.left);//left
+			self.core.fn.action.add(38, "keydown", self.fn.actions.kd.top);//top
+			self.core.fn.action.add(39, "keydown", self.fn.actions.kd.right);//right
+			self.core.fn.action.add(40, "keydown", self.fn.actions.kd.bottom);//bottom
+			//keyup
+			self.core.fn.action.add(37, "keyup", self.fn.actions.ku.left);//left
+			self.core.fn.action.add(38, "keyup", self.fn.actions.ku.top);//top
+			self.core.fn.action.add(39, "keyup", self.fn.actions.ku.right);//right
+			self.core.fn.action.add(40, "keyup", self.fn.actions.ku.bottom);//bottom
+		}
 	};
 
 	this.events.onContact=function(obj){
 		ui.message.vars.isDisplayed=1;
 		ui.message.vars.msg='Collision !';
 	};
+
+	//constructor
+	//default value
+	self.vars.body.color='green';
+	self.vars.body.vx=1.5;
+	self.vars.body.vy=1.5;
+	self.vars.body.isMoving=0;
+	self.vars.body.isJumping=0;
+	self.vars.body.isUp=1;
+	self.vars.body.direction=1;//1 right, -1 left
+	self.vars.moveTO=null;//timeout for movement
+
+	self.fn.construct(arguments[0], arguments[1]);
+	self.fn.actions.set();
 }

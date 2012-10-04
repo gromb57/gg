@@ -20,6 +20,15 @@ function gRect(){
 		return __is;
 	};
 
+	this.draw=function(ctx, style){
+		ctx.save();
+
+		if(style) ctx.fillStyle = style;
+		ctx.fillRect(this.x, this.y, this.w, this.h);
+
+		ctx.restore();
+	};
+
 	//constructor
 	if(arguments.length > 0){
 		if( (arguments[0] instanceof gPoint) && (arguments[1] instanceof gPoint) && (arguments[2] instanceof gPoint) && (arguments[3] instanceof gPoint) ){

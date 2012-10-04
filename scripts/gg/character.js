@@ -4,6 +4,24 @@ function ggCharacter(){
 
 	var self=this;
 
+	this.fn.draw=function(context){
+		context.save();
+
+		if(self.vars.body.x > self.core.vars.scene.screen.w){
+			self.vars.body.x=0;
+		}else if(self.vars.body.x < 0){
+			self.vars.body.x=self.core.vars.scene.screen.w;
+		}
+
+		//DRAW
+		self.fn.animation.moving();
+
+		/*var date = new Date();
+		var time = date.getTime();
+		console.log(time);*/
+		context.restore();
+	};
+
 	this.fn.animation={
 		moving:function(){
 			if(self.vars.body.skin.current){
@@ -20,8 +38,11 @@ function ggCharacter(){
 				}else{
 					self.vars.body.skin.pos++;
 				}
-				self.vars.core.vars.ctx.drawImage(__img, self.vars.body.x, (self.vars.body.y - self.vars.body.h), self.vars.body.w, self.vars.body.h);
+				self.core.vars.ctx.drawImage(__img, self.vars.body.x, (self.vars.body.y - self.vars.body.h), self.vars.body.w, self.vars.body.h);
 				break;
+				default:
+				self.core.vars.ctx.fillStyle = self.vars.body.color;
+				self.core.vars.ctx.fillRect(self.vars.body.x, self.vars.body.y, self.vars.body.w, self.vars.body.h);
 			}
 		},
 		jumping:function(){
