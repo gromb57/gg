@@ -124,6 +124,7 @@ function ggObject(){
 			if(self.vars.on && self.vars.on.vars.id == obj.vars.id ){
 				if(__is){
 				}else{
+					self.vars.isFalling=1;
 					self.vars.on=null;
 				}
 			}else{

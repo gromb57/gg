@@ -132,6 +132,7 @@ function ggMainChar(){
 			self.vars.isFalling=0;
 			self.vars.isJumping=0;
 			self.vars.isUp=1;
+			self.vars.body.y=obj.vars.body.y-obj.vars.body.h;
 			clearTimeout(self.vars.jumpTO);
 		}
 	};
