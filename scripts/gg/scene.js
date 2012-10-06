@@ -73,6 +73,10 @@ function ggScene(){
 					}
 				}
 			}
+			//set canvas dim
+			self.core.vars.canvas.setAttribute('width', self.screen.w);
+			self.core.vars.canvas.setAttribute('height', self.screen.h);
+
 			self.core.fn.draw();
 		},
 		loadObj:function(obj){

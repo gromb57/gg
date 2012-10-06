@@ -11,8 +11,8 @@ function ggObject(){
 			vx:1,
 			vy:1,
 			skin:{
-				current:null,
-				pos:0,
+				current:null,//current skin
+				pos:0,//index used for img type to know which step in animation is currently displayed
 				stand:{
 				},
 				move:{
@@ -42,6 +42,16 @@ function ggObject(){
 					if(arguments[0].w){
 						self.vars.body.w=parseInt(arguments[0].w, 10);
 					}
+					//default stand skin
+					self.fn.skin.set();
+					if(arguments[0].skin){
+						for(var x in arguments[0].skin){
+							if(arguments[0].skin.hasOwnProperty(x)){
+								self.fn.skin.set(x, arguments[0].skin[x].type, arguments[0].skin[x].data);
+							}
+						}
+					}
+					self.fn.skin.change("stand");
 				}
 			}
 
@@ -60,6 +70,30 @@ function ggObject(){
 			var time = date.getTime();
 			console.log(time);*/
 			self.core.vars.ctx.restore();
+		},
+		drawObj:function(){
+			switch(self.vars.body.skin.current.type){
+				case 'img':
+				var __img = new Image();   // Create new img element
+				__img.src=self.vars.body.skin.current.data[self.vars.body.skin.pos];
+				if( (self.vars.body.skin.pos == self.vars.body.skin.current.data.length-1) || (self.vars.body.skin.pos > self.vars.body.skin.current.data.length-1) ){
+					self.vars.body.skin.pos=0;
+				}else{
+					self.vars.body.skin.pos++;
+				}
+				self.core.vars.ctx.drawImage(__img, self.vars.body.x, (self.vars.body.y - self.vars.body.h), self.vars.body.w, self.vars.body.h);
+				break;
+				case 'rect':
+				if(self.vars.body.skin.current.data instanceof gRect){
+					self.vars.body.skin.current.data.draw(self.core.vars.ctx);
+				}else{
+					throw "object type is rect but data are invalid";
+				}
+				break;
+				default:
+				self.core.vars.ctx.fillStyle = self.vars.body.color;
+				self.core.vars.ctx.fillRect(self.vars.body.x, self.vars.body.y, self.vars.body.w, self.vars.body.h);
+			}
 		},
 		init:function(ggCore_object){
 			self.core=ggCore_object;
@@ -84,6 +118,28 @@ function ggObject(){
 			__is&=(__isX && __isY);
 
 			if(__is) self.events.onContact(obj);
+		},
+		skin:{
+			change:function(sel){
+				if(self.vars.body.skin[sel]) self.vars.body.skin.current=self.vars.body.skin[sel];
+			},
+			set:function(stance, type, data){
+				stance=stance == undefined ? "stand" : stance ;
+
+				var data;
+
+				switch(type){
+					case "img":
+					self.vars.body.skin.stand.type='img';
+					self.vars.body.skin.stand.data=typeof data == 'string' ? [data] : data;
+					break;
+					case "rect":
+					default:
+					data=new gRect(self.vars.body.x, self.vars.body.y, self.vars.body.w, self.vars.body.h);
+				}
+				self.vars.body.skin[stance].type=type;
+				self.vars.body.skin[stance].data=data;
+			}
 		}
 	};
 	this.events={

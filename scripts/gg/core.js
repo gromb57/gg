@@ -98,8 +98,6 @@ function ggCore(canvasElm){
 		loadScene:function(index){
 			self.vars.sceneIndex=index;
 			self.vars.scene=self.vars.scenes[index];
-			self.vars.canvas.setAttribute('width', self.vars.scene.screen.w);
-			self.vars.canvas.setAttribute('height', self.vars.scene.screen.h);
 			self.vars.ctx=self.vars.canvas.getContext('2d');
 			self.vars.scene.fn.init(self);
 			self.fn.addDraw(self.vars.scene.fn.draw);

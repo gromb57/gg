@@ -14,10 +14,10 @@ function ggMainChar(){
 			self.core.fn.draw();
 
 			if(self.vars.body.isMoving){
-				self.vars.body.skin.current=self.vars.body.skin.move;
+				self.fn.skin.change("move");
 				self.fn.move();
 			}else{
-				self.vars.body.skin.current=self.vars.body.skin.stand;
+				self.fn.skin.change("stand");
 			}
 		},
 		1000/60);
@@ -31,7 +31,7 @@ function ggMainChar(){
 			//char is jumping
 			if( self.vars.body.isJumping ){
 				//set skin
-				self.vars.body.skin.current=self.vars.body.skin.jump;
+				self.fn.skin.change("jump");
 
 				if( self.vars.body.y == (self.core.vars.scene.screen.h - self.core.vars.scene.ground.h) ){
 					self.vars.body.isJumping=0;
@@ -46,7 +46,7 @@ function ggMainChar(){
 				}
 			}else{//char start jump
 				//set skin
-				self.vars.body.skin.current=self.vars.body.skin.stand;
+				self.fn.skin.change("stand");
 
 				//display message
 				if(self.core.vars.ui){
