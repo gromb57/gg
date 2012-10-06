@@ -21,7 +21,9 @@ function ggObject(){
 				}
 			}
 		},
-		id:null
+		id:null,
+		isFalling:0,
+		on:null//reference to another object
 	};
 	this.fn={
 		construct:function(){
@@ -101,6 +103,7 @@ function ggObject(){
 		},
 		isOnContact:function(obj){
 			var __is=true, __isX=false, __isY=false;
+
 			//x
 			for(var __i=self.vars.body.x;__i<=(self.vars.body.x+self.vars.body.w);__i++){
 				if( (obj.vars.body.x<=__i) && (__i<=(obj.vars.body.x+obj.vars.body.w)) ){
@@ -117,7 +120,18 @@ function ggObject(){
 			}
 			__is&=(__isX && __isY);
 
-			if(__is) self.events.onContact(obj);
+			//test if object is on another
+			if(self.vars.on && self.vars.on.vars.id == obj.vars.id ){
+				if(__is){
+				}else{
+					self.vars.on=null;
+				}
+			}else{
+				if(__is){
+					self.vars.on=obj;
+					self.events.onContact(obj);
+				}
+			}
 		},
 		skin:{
 			change:function(sel){

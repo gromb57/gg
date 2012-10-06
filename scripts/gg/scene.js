@@ -8,14 +8,10 @@ function ggScene(){
 		w:document.width,
 		h:document.height-5
 	};
-	self.ground={
-		h:0
-	};
+	self.isGravity=1;
 	self.objects={
-		characters:{
-			mains:[],
-			enemies:[]
-		},
+		mains:[],
+		enemies:[],
 		items:[],
 		solids:[],
 		liquids:[]
@@ -23,7 +19,6 @@ function ggScene(){
 	self.fn={
 		init:function(ggCore_object){
 			self.core=ggCore_object;
-			self.ground.h=self.screen.h/10;
 		},
 		draw:function(context){
 			/*context.save();
@@ -77,19 +72,19 @@ function ggScene(){
 			self.core.vars.canvas.setAttribute('width', self.screen.w);
 			self.core.vars.canvas.setAttribute('height', self.screen.h);
 
-			self.core.fn.draw();
+			self.core.fn.loop.start();
 		},
 		loadObj:function(obj){
 			if(obj.type){
 				switch(obj.type){
 					case "enemy":
 					if(ggEnemyChar){
-						if( self.objects.characters.enemies && self.objects.characters.enemies.length ){
+						if( self.objects.enemies && self.objects.enemies.length ){
 						}else{
-							self.objects.characters.enemies=[];
+							self.objects.enemies=[];
 						}
 						var enemy=new ggEnemyChar(obj, self.core);
-						self.objects.characters.enemies.push(enemy);
+						self.objects.enemies.push(enemy);
 						//enemy.fn.startIA();
 					}else{
 						self.core.fn.errorMsg('ggEnemyChar not found');
@@ -123,15 +118,12 @@ function ggScene(){
 					case "character":
 					case "spawn":
 					if(ggMainChar){
-						if( self.objects.characters.mains && self.objects.characters.mains.length ){
+						if( self.objects.mains && self.objects.mains.length ){
 						}else{
-							self.objects.characters.mains=[];
+							self.objects.mains=[];
 						}
 						var mainChar=new ggMainChar(obj, self.core);
-						self.objects.characters.mains.push(mainChar);
-
-						//set ground ; IMPORTANT : work if there are only one main_char
-						self.ground.h=self.screen.h-obj.y;
+						self.objects.mains.push(mainChar);
 					}else{
 						self.core.fn.errorMsg('ggMainChar not found');
 					}

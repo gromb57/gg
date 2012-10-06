@@ -1,11 +1,13 @@
 function ggCore(canvasElm){
 	//object representing self
-	var self=this;
+	var self=this,
+	collision_buffer=null;
 
 	self.vars={
 		actions:{},
 		canvas:null,
 		ctx:null,
+		loopTO:null,//loop timeout
 		scene:null,//currentScene
 		scenes:[],//array containing scene to load
 		sceneIndex:0,//index of current scene
@@ -28,26 +30,71 @@ function ggCore(canvasElm){
 		},
 		events:{
 			collision:{
+				launch:function(){
+					//set buffer
+					collision_buffer={};
+					for(var x in self.vars.scene.objects){
+						if(self.vars.scene.objects.hasOwnProperty(x)){
+							collision_buffer[x]=[];
+							for(var y in self.vars.scene.objects[x]){
+								if(self.vars.scene.objects[x].hasOwnProperty(y)){
+									collision_buffer[x][y]=self.vars.scene.objects[x][y];
+								}
+							}
+						}
+					}
+					//check
+					self.fn.events.collision.check();
+				},
 				/**
 				* check object collisions
 				*/
-				check:function(obj){
-					for(var __x in obj){
-						if(obj.hasOwnProperty(__x)){
-							if(__x != "mains"){
-								if( obj[__x].hasOwnProperty('vars') && obj[__x].vars.hasOwnProperty('body') ){
-									for(var __y in self.vars.scene.objects.characters.mains){
-										if(self.vars.scene.objects.characters.mains.hasOwnProperty(__y)){
-											self.vars.scene.objects.characters.mains[__y].fn.isOnContact(obj[__x]);
+				check:function(){
+					//browse objects
+					for(var x in self.vars.scene.objects){
+						if(self.vars.scene.objects.hasOwnProperty(x)){
+							//browse objects type
+							for(var y in self.vars.scene.objects[x]){
+								if(self.vars.scene.objects[x].hasOwnProperty(y)){
+									//check buffer objects
+									for(var bx in collision_buffer){
+										if(collision_buffer.hasOwnProperty(bx)){
+											//check buff objects type
+											for(var by in collision_buffer[bx]){
+												if(collision_buffer[bx].hasOwnProperty(by)){
+													if(self.vars.scene.objects[x][y].vars.id == collision_buffer[bx][by].vars.id){
+													}else{
+														self.vars.scene.objects[x][y].fn.isOnContact(collision_buffer[bx][by]);
+													}
+												}
+											}
 										}
 									}
-								}else{
-									self.fn.events.collision.check(obj[__x]);
+									//remove objects type from buffer
+									delete collision_buffer[x][y];
+								}
+							}
+							//remove objects from buffer
+							delete collision_buffer[x];
+						}
+					}
+				}
+			}
+		},
+		physics:{
+			gravity:function(obj){
+				for(var x in obj){
+					if(obj.hasOwnProperty(x)){
+						for(var y in obj[x]){
+							if(obj[x].hasOwnProperty(y)){
+								if( (obj[x][y] instanceof ggCharacter) || (obj[x][y] instanceof ggMainChar) || (obj[x][y] instanceof ggEnemyChar) ){
+									if(obj[x][y].vars.isFalling) obj[x][y].vars.body.y+=obj[x][y].vars.body.vy;
 								}
 							}
 						}
 					}
 				}
+				self.fn.draw();
 			}
 		},
 		errorMsg:function(msg){
@@ -58,7 +105,6 @@ function ggCore(canvasElm){
 		},
 		//draw self
 		draw:function(){
-			var __timeout=1000 / 60;
 			self.vars.drawTimeout=setTimeout(function(){
 				//clearRect
 				self.vars.ctx.clearRect(0, 0, self.vars.scene.screen.w, self.vars.scene.screen.h);
@@ -68,11 +114,25 @@ function ggCore(canvasElm){
 						self.vars.toDraw[__funcKey](self.vars.ctx);
 					}
 					__funcKey=null;
-					
-					self.fn.events.collision.check(self.vars.scene.objects);
+
+					self.fn.events.collision.launch();
 				}
+			}, 1000/60);
+		},
+		loop:{
+			start:function(){
+				self.vars.loopTO=setTimeout(function(){
+					if(self.vars.scene.isGravity){
+						self.fn.physics.gravity(self.vars.scene.objects);
+						self.fn.loop.start();
+					}else{
+						self.fn.loop.stop();
+					}
+				}, 1000/60);
 			},
-			__timeout);
+			stop:function(){
+				clearTimeout(self.vars.loopTO);
+			}
 		},
 		//stop refresh drawing
 		stopDraw:function(){

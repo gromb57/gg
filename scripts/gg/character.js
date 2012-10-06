@@ -32,6 +32,10 @@ function ggCharacter(){
 	};
 
 	this.events.onContact=function(obj){
-		//TODO : implements
+		if(obj instanceof ggSolid){
+			self.vars.isFalling=0;
+		}
 	};
+
+	this.vars.isFalling=1;
 }
