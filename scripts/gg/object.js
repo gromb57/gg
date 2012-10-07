@@ -102,22 +102,18 @@ function ggObject(){
 			ggCore_object.fn.addDraw(self.fn.draw);
 		},
 		isOnContact:function(obj){
-			var __is=true, __isX=false, __isY=false;
+			var __is=true, __isX=false, __isY=false, __isTop=false, __isBot=false, __isLeft=false, __isRight=false;
 
+			//check contact between 2 objects
 			//x
-			for(var __i=self.vars.body.x;__i<=(self.vars.body.x+self.vars.body.w);__i++){
-				if( (obj.vars.body.x<=__i) && (__i<=(obj.vars.body.x+obj.vars.body.w)) ){
-					__isX=true;
-					break;
-				}
+			if( (self.vars.body.x>=obj.vars.body.x && self.vars.body.x<=obj.vars.body.x+obj.vars.body.w) || (self.vars.body.x+self.vars.body.w>=obj.vars.body.x && self.vars.body.x+self.vars.body.w<=obj.vars.body.x+obj.vars.body.w) ){
+				__isX=true;
 			}
 			//y
-			for(var __i=self.vars.body.y;__i<=(self.vars.body.y+self.vars.body.h);__i++){
-				if( (obj.vars.body.y<=__i) && (__i<=(obj.vars.body.y+obj.vars.body.h)) ){
-					__isY=true;
-					break;
-				}
+			if( (self.vars.body.y>=obj.vars.body.y && self.vars.body.y<=obj.vars.body.y+obj.vars.body.h) || (self.vars.body.y+self.vars.body.h>=obj.vars.body.y && self.vars.body.y+self.vars.body.h<=obj.vars.body.y+obj.vars.body.h) ){
+				__isY=true;
 			}
+
 			__is&=(__isX && __isY);
 
 			//test if object is on another
@@ -129,8 +125,28 @@ function ggObject(){
 				}
 			}else{
 				if(__is){
+					//check if self is on contact on top of obj
+					if(self.vars.body.y+self.vars.body.h <= obj.vars.body.y+self.vars.body.vy && obj.vars.body.y-self.vars.body.vy <= self.vars.body.y+self.vars.body.h){
+						__isTop=true;
+					}
+
+					//check if self is on contact on bottom of obj
+					if(self.vars.body.y <= obj.vars.body.y+obj.vars.body.h+self.vars.body.vy && obj.vars.body.y+obj.vars.body.h-self.vars.body.vy <= self.vars.body.y){
+						__isBot=true;
+					}
+
+					//check if self is on contact on left of obj
+					if(self.vars.body.x+self.vars.body.w <= obj.vars.body.x+self.vars.body.vx && obj.vars.body.x-self.vars.body.vx <= self.vars.body.x+self.vars.body.w ){
+						__isLeft=true;
+					}
+
+					//check if self is on contact on right of obj
+					if(self.vars.body.x <= obj.vars.body.x+obj.vars.body.w+self.vars.body.vx && obj.vars.body.x+obj.vars.body.w-self.vars.body.vx <= self.vars.body.x){
+						__isRight=true;
+					}
+
 					self.vars.on=obj;
-					self.events.onContact(obj);
+					self.events.onContact(obj, __isTop, __isRight, __isBot, __isLeft);
 				}
 			}
 		},
@@ -158,7 +174,7 @@ function ggObject(){
 		}
 	};
 	this.events={
-		onContact:function(obj){
+		onContact:function(obj, isTop, isRight, isBot, isLeft){
 			
 		}
 	};

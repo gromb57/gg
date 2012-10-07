@@ -8,9 +8,34 @@ function ggMainChar(){
 
 	var self=this;
 
+	this.fn.draw=function(context){
+		context.save();
+
+		//move character to opposite screen side
+		if(self.vars.body.x > self.core.vars.scene.screen.w){
+			self.vars.body.x=0;
+		}else if(self.vars.body.x < 0){
+			self.vars.body.x=self.core.vars.scene.screen.w;
+		}
+		//
+		if(self.vars.body.y >= self.core.vars.scene.screen.h){
+			clearTimeout(self.core.vars.drawTimeout);
+			clearTimeout(self.core.vars.loopTO);
+			alert("game over");
+		}
+
+		//DRAW
+		self.fn.animation.moving();
+
+		/*var date = new Date();
+		var time = date.getTime();
+		console.log(time);*/
+		context.restore();
+	};
+
 	this.fn.move=function(){
 		self.vars.moveTO=setTimeout(function(){
-			self.vars.body.x+=(self.vars.direction*self.vars.body.vx*10);
+			self.vars.body.x+=(self.vars.direction*self.vars.body.vx);
 			self.core.fn.draw();
 
 			if(self.vars.isMoving){
@@ -24,8 +49,7 @@ function ggMainChar(){
 	};
 
 	this.fn.jump=function(){
-		var __jump_px=6,//6
-		__jump_height=90;//90
+		var __jump_height=self.vars.body.vy*20;
 
 		self.vars.jumpTO=setTimeout(function(){
 			//char is jumping
@@ -34,11 +58,11 @@ function ggMainChar(){
 				self.fn.skin.change("jump");
 
 				if( self.vars.isUp && self.vars.body.y > (self.vars.b4jumpPos - __jump_height) ){
-					self.vars.body.y+=(-__jump_px*self.vars.body.vy);
+					self.vars.body.y-=self.vars.body.vy;
 					self.fn.jump();
 				}else{
 					self.vars.isUp=0;
-					self.vars.body.y+=(__jump_px*self.vars.body.vy);
+					self.vars.body.y+=self.vars.body.vy;
 					self.fn.jump();
 				}
 			}else{//char start jump
@@ -75,7 +99,7 @@ function ggMainChar(){
 				}
 			},
 			top:function(){
-				if( self.vars.isJumping ){
+				if( self.vars.isJumping || self.vars.isFalling ){
 				}else{
 					self.fn.jump();
 				}
@@ -125,23 +149,31 @@ function ggMainChar(){
 		}
 	};
 
-	this.events.onContact=function(obj){
+	this.events.onContact=function(obj, isTop, isRight, isBot, isLeft){
 		if(obj instanceof ggEnemyChar){
 			self.core.vars.ui.message.fn.set('Collision with an enemy !');
 		}else if(obj instanceof ggSolid){
-			self.vars.isFalling=0;
-			self.vars.isJumping=0;
-			self.vars.isUp=1;
-			self.vars.body.y=obj.vars.body.y-obj.vars.body.h;
-			clearTimeout(self.vars.jumpTO);
+			if(isTop){
+				self.vars.isFalling=0;
+				self.vars.isJumping=0;
+				self.vars.isUp=1;
+				clearTimeout(self.vars.jumpTO);
+				self.vars.body.y=obj.vars.body.y-self.vars.body.h;
+			}else if(isRight){
+				self.vars.body.x=obj.vars.body.x+obj.vars.body.w+.5;
+			}else if(isBot){
+				self.vars.body.y=obj.vars.body.y+obj.vars.body.h;
+			}else if(isLeft){
+				self.vars.body.x=obj.vars.body.x-self.vars.body.w-.5;
+			}
 		}
 	};
 
 	//constructor
 	//default value
 	self.vars.body.color='green';
-	self.vars.body.vx=1.5;
-	self.vars.body.vy=1.5;
+	self.vars.body.vx=6;
+	self.vars.body.vy=6;
 	self.vars.isMoving=0;
 	self.vars.isJumping=0;
 	self.vars.b4jumpPos=0;

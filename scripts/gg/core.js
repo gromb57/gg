@@ -88,7 +88,9 @@ function ggCore(canvasElm){
 						for(var y in obj[x]){
 							if(obj[x].hasOwnProperty(y)){
 								if( (obj[x][y] instanceof ggCharacter) || (obj[x][y] instanceof ggMainChar) || (obj[x][y] instanceof ggEnemyChar) ){
-									if(obj[x][y].vars.isFalling) obj[x][y].vars.body.y+=obj[x][y].vars.body.vy;
+									if(obj[x][y].vars.isFalling && !obj[x][y].vars.isJumping){
+										obj[x][y].vars.body.y+=obj[x][y].vars.body.vy;
+									}
 								}
 							}
 						}

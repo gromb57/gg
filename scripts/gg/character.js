@@ -7,12 +7,6 @@ function ggCharacter(){
 	this.fn.draw=function(context){
 		context.save();
 
-		if(self.vars.body.x > self.core.vars.scene.screen.w){
-			self.vars.body.x=0;
-		}else if(self.vars.body.x < 0){
-			self.vars.body.x=self.core.vars.scene.screen.w;
-		}
-
 		//DRAW
 		self.fn.animation.moving();
 
@@ -31,7 +25,7 @@ function ggCharacter(){
 		}
 	};
 
-	this.events.onContact=function(obj){
+	this.events.onContact=function(obj, isTop, isRight, isBot, isLeft){
 		if(obj instanceof ggSolid){
 			self.vars.isFalling=0;
 		}
