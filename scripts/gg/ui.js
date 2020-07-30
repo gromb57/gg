@@ -6,6 +6,7 @@ function ggUI(){
 		init:function(ggCore_object){
 			self.core=ggCore_object;
 			self.actions.set();
+			self.score.fn.init();
 		}
 	};
 	self.actions={
@@ -26,8 +27,8 @@ function ggUI(){
 	self.score={
 		vars:{
 			value:0,
-			h:scene.screen.h/10,
-			w:scene.screen.w/5,
+			h:0,
+			w:0,
 			padding:10
 		},
 		fn:{
@@ -57,6 +58,16 @@ function ggUI(){
 				ctx.fillStyle = '#333';
 				ctx.fillText("Score : "+self.score.vars.value, (self.score.vars.padding*2), (self.score.vars.padding*4));
 				ctx.restore();
+			},
+			init:function() {
+				if( scene && scene.screen ) {
+					if( scene.screen.h ) {
+						self.score.vars.h = scene.screen.h / 10;
+					}
+					if( scene.screen.w ) {
+						self.score.vars.w = scene.screen.w / 5;
+					}
+				}
 			}
 		}
 	};

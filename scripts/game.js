@@ -1,10 +1,11 @@
 //INIT
 var game=new ggCore("canvas1"),
 scene=new ggScene('assets/scene/001.json'),
-ui=new ggUI();
+ui;
 
-game.fn.addUI(ui);
 game.fn.addScene(scene);
+ui=new ggUI();
+game.fn.addUI(ui);
 
 /*var scene=new ggScene();
 game.fn.addScene(scene);
